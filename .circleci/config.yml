@@ -44,7 +44,7 @@ jobs:
 
   test-environment:
     machine:
-      image: classic:latest
+      image: ubuntu-1604:201903-01
     working_directory: ~/mozilla/telemetry-airflow
     steps:
       - checkout
