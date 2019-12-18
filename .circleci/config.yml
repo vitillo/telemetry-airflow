@@ -22,14 +22,6 @@ jobs:
       - run: |
           printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' "$CIRCLE_SHA1" "$CIRCLE_TAG" "$CIRCLE_PROJECT_USERNAME" "$CIRCLE_PROJECT_REPONAME" "$CIRCLE_BUILD_URL" > version.json
       - run: docker build -t app:build .
-      - run:
-          name: Save image into cache
-          command: |
-            docker save -o /tmp/dev.tar "app:build"
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /tmp/dev.tar
 
   test:
     docker:
@@ -45,15 +37,10 @@ jobs:
   test-environment:
     machine:
       image: ubuntu-1604:201903-01
+      docker_layer_caching: true
     working_directory: ~/mozilla/telemetry-airflow
     steps:
       - checkout
-      - restore_cache:
-          key: v1-{{ .Branch }}
-      - run:
-          name: Restore cache
-          command: |
-            docker load -i /tmp/dev.tar
       - run:
           command: |
             docker-compose pull
@@ -120,8 +107,6 @@ workflows:
               only: /.*/
 
       - test-environment:
-          requires:
-            - build
           filters:
             tags:
               only: /.*/
