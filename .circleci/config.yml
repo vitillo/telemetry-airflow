@@ -44,7 +44,7 @@ jobs:
 
   test-environment:
     machine:
-      image: default
+      image: classic:latest
     working_directory: ~/mozilla/telemetry-airflow
     steps:
       - checkout
@@ -56,8 +56,6 @@ jobs:
             docker load -i /tmp/dev.tar
       - run:
           command: |
-            pip install --upgrade pip
-            pip install --upgrade docker-compose
             docker-compose pull
             docker-compose build
             # now take ownership of the folder
